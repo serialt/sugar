@@ -28,11 +28,13 @@ var logSugar *zap.SugaredLogger
 func GetMysqlGormDB(mydb *Database) *gorm.DB {
 	var myGormDB *gorm.DB
 	var err error
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		mydb.Username,
 		mydb.Password,
 		mydb.Addr,
 		mydb.Port,
+		mydb.DBName,
 	)
 	for {
 		myGormDB, err = gorm.Open(mysql.New(mysql.Config{
@@ -45,6 +47,7 @@ func GetMysqlGormDB(mydb *Database) *gorm.DB {
 		}), &gorm.Config{Logger: GormLogger})
 		if err != nil {
 			logSugar.Infof("grom open failed: %v\n", err)
+			time.Sleep(3 * time.Second)
 		} else {
 			break
 		}
@@ -55,7 +58,9 @@ func GetMysqlGormDB(mydb *Database) *gorm.DB {
 func GetPostgreSQLGormDB(mydb *Database) *gorm.DB {
 	var myGormDB *gorm.DB
 	var err error
-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+	// "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		mydb.Addr,
 		mydb.Username,
 		mydb.Password,
 		mydb.Addr,
@@ -68,6 +73,7 @@ func GetPostgreSQLGormDB(mydb *Database) *gorm.DB {
 		}), &gorm.Config{Logger: GormLogger})
 		if err != nil {
 			logSugar.Infof("gorm open failed: %v\n", err)
+			time.Sleep(3 * time.Second)
 		} else {
 			break
 		}
