@@ -165,22 +165,22 @@ func LoadConfig(filepath string) {
 	}
 	filepath, err := homedir.Expand(filepath)
 	if err != nil {
-		fmt.Printf("get config file failed: %v\n", err)
+		fmt.Printf("Get config file failed: %v\n", err)
 	}
 	if !Exists(filepath) {
-		fmt.Printf("file not exist, please check it: %v\n", filepath)
+		fmt.Printf("File not exist, please check it: %v\n", filepath)
 		os.Exit(8)
 	}
 	config, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		fmt.Printf("pread config failed, please check the path: %v , err: %v\n", filepath, err)
+		fmt.Printf("Read config failed, please check the path: %v , err: %v\n", filepath, err)
 	}
 	err = yaml.Unmarshal(config, &Config)
 	if err != nil {
 		fmt.Printf("Unmarshal to struct, err: %v", err)
 	}
 	// fmt.Printf("LoadConfig: %v\n", Config)
-	fmt.Printf("config path: %v\n", filepath)
+	fmt.Printf("Config path: %v\n", filepath)
 }
 
 ```
