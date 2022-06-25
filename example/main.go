@@ -6,7 +6,7 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/serialt/sugar"
+	"github.com/serialt/sugar/v2"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
