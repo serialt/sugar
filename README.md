@@ -1,6 +1,7 @@
 # 连接数据库和日志的库
 
 ### 使用方法
+v1及以下版本是带有数据库，v2版本不带有数据库
 ```
 go get -u  github.com/serialt/sugar
 
@@ -28,12 +29,12 @@ var (
 	BuildTime  = "2006-01-02 15:04:05"
 	GitCommit  = "xxxxxxxxxxx"
 
-	// 配置文件,置空则表示读取项目根目录里的config.yaml,也可以配置CONFIG环境变量设置
+	// 配置文件,置空则表示读取项目根目录里的config.yaml
 	ConfigPath = ""
 
 	// Logger   *zap.Logger
 	LogSugar *zap.SugaredLogger
-	Config *MyConfig
+	Config   *MyConfig
 )
 
 type Gitee struct {
@@ -59,7 +60,6 @@ func init() {
 		flag.PrintDefaults()
 	}
 	flag.ErrHelp = fmt.Errorf("\n\nSome errors have occurred, check and try again !!! ")
-
 	flag.CommandLine.SortFlags = false
 	flag.Parse()
 
@@ -67,8 +67,9 @@ func init() {
 	byteConfig, _ := sugar.LoadConfig(ConfigPath)
 	yaml.Unmarshal(byteConfig, &Config)
 	// fmt.Println(Config)
-	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile)
 
+	// Logger = sugar.NewLogger(LogLevel, LogFile)
+	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile)
 }
 
 func main() {
@@ -83,7 +84,6 @@ func main() {
 	LogSugar.Info("info log")
 	LogSugar.Error("error log")
 }
-
 ```
 
 

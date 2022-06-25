@@ -24,9 +24,7 @@ var (
 
 	// Logger   *zap.Logger
 	LogSugar *zap.SugaredLogger
-
-	// DB       *gorm.DB
-	Config *MyConfig
+	Config   *MyConfig
 )
 
 type Gitee struct {
@@ -65,18 +63,6 @@ func init() {
 	// Logger = sugar.NewLogger(LogLevel, LogFile)
 	// LogSugar = Logger.Sugar()
 	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile)
-
-	// mydb := &sugar.Database{
-	// 	Type:     "mysql",
-	// 	Addr:     "host",
-	// 	Port:     "3306",
-	// 	DBName:   "db-name",
-	// 	Username: "db-user",
-	// 	Password: "db-pass",
-	// }
-	// DB = mydb.NewDBConnect(Logger)
-	// DB.AutoMigrate(&Department{})
-	// DB.AutoMigrate(&Userlist{})
 }
 
 func main() {
