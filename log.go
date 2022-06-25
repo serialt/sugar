@@ -34,7 +34,6 @@ func LevelToZapLevel(level string) zapcore.Level {
 		return zapcore.DPanicLevel
 	case "panic":
 		return zapcore.PanicLevel
-
 	case "fatal":
 		return zapcore.FatalLevel
 	default:
@@ -96,23 +95,23 @@ func (lg *Logger) NewMyLogger() *zap.Logger {
 	return myLogger
 }
 
-// 自定日志配置可以参考此方法
-func NewLogger() *zap.Logger {
+// NewLogger 自定日志配置可以参考此方法
+func NewLogger(logLevel, logFile string) *zap.Logger {
 	lg := &Logger{
-		LogLevel:      "info",
-		LogFile:       "./imau.log",
+		LogLevel:      logLevel,
+		LogFile:       logFile,
 		LogType:       "txt",
 		LogMaxSize:    50,
-		LogMaxBackups: 3,
+		LogMaxBackups: 10,
 		LogMaxAge:     365,
 		LogCompress:   true,
 	}
 	return lg.NewMyLogger()
 }
 
-// 创建一个sugar
-func NewSugarLogger() *zap.SugaredLogger {
-	sugarLog := NewLogger()
+// NewSugarLogger 创建一个sugar
+func NewSugarLogger(logLevel, logFile string) *zap.SugaredLogger {
+	sugarLog := NewLogger(logLevel, logFile)
 	return sugarLog.Sugar()
 
 }

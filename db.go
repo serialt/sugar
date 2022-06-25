@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/glebarez/sqlite"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -63,7 +64,7 @@ func GetPostgreSQLGormDB(mydb *Database) *gorm.DB {
 		mydb.Addr,
 		mydb.Username,
 		mydb.Password,
-		mydb.Addr,
+		mydb.DBName,
 		mydb.Port,
 	)
 	for {
@@ -71,6 +72,23 @@ func GetPostgreSQLGormDB(mydb *Database) *gorm.DB {
 			DSN:                  dsn,
 			PreferSimpleProtocol: true, // disables implicit prepared statement usage,
 		}), &gorm.Config{Logger: GormLogger})
+		if err != nil {
+			logSugar.Infof("gorm open failed: %v\n", err)
+			time.Sleep(3 * time.Second)
+		} else {
+			break
+		}
+	}
+	return myGormDB
+}
+
+func GetSqliteGormDB(mydb *Database) *gorm.DB {
+	var myGormDB *gorm.DB
+	var err error
+	// "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+
+	for {
+		myGormDB, err = gorm.Open(sqlite.Open(mydb.DBName), &gorm.Config{Logger: GormLogger})
 		if err != nil {
 			logSugar.Infof("gorm open failed: %v\n", err)
 			time.Sleep(3 * time.Second)
@@ -93,19 +111,16 @@ func (db *Database) NewDBConnect(zaplog *zap.Logger) *gorm.DB {
 
 	var GormDB *gorm.DB
 	switch db.Type {
-	// case "sqlite":
-	// 	mySqlite := NewMySqlite()
-	// 	GormDB = SqliteInit(mySqlite)
-	// 	fmt.Println("使用的数据库是 sqlite")
+	case "sqlite":
+		GormDB = GetSqliteGormDB(db)
 	case "mysql":
 		GormDB = GetMysqlGormDB(db)
-		logSugar.Info("使用的数据库是 mysql")
 	case "postgresql":
 		GormDB = GetPostgreSQLGormDB(db)
-		logSugar.Info("使用的数据库是 postgresql")
 	default:
-		logSugar.Info("The database is not supported, please choice [sqlite] or [mysql]")
+		logSugar.Error("The database is not supported, please choice [sqlite],[mysql] or [postgresql]")
 	}
+	logSugar.Infof("使用的数据库是 %s", db.Type)
 	if db.MaxOpenConns != 0 {
 
 		// Gorm 使用database/sql 维护连接池

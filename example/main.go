@@ -1,13 +1,3 @@
-# 连接数据库和日志的库
-
-### 使用方法
-```
-go get -u  github.com/serialt/sugar
-
-```
-
-### 库使用方法
-```go
 package main
 
 import (
@@ -28,11 +18,14 @@ var (
 	BuildTime  = "2006-01-02 15:04:05"
 	GitCommit  = "xxxxxxxxxxx"
 
-	// 配置文件,置空则表示读取项目根目录里的config.yaml,也可以配置CONFIG环境变量设置
+	// 配置文件,置空则表示读取项目根目录里的config.yaml
+	// ConfigPath = "/Users/serialt/Desktop/imau/github/sugar/example/config.yaml"
 	ConfigPath = ""
 
 	// Logger   *zap.Logger
 	LogSugar *zap.SugaredLogger
+
+	// DB       *gorm.DB
 	Config *MyConfig
 )
 
@@ -67,8 +60,23 @@ func init() {
 	byteConfig, _ := sugar.LoadConfig(ConfigPath)
 	yaml.Unmarshal(byteConfig, &Config)
 	// fmt.Println(Config)
+
+	// 可以先new一个Logger，然后再获取Sugar，也可以直接获取
+	// Logger = sugar.NewLogger(LogLevel, LogFile)
+	// LogSugar = Logger.Sugar()
 	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile)
 
+	// mydb := &sugar.Database{
+	// 	Type:     "mysql",
+	// 	Addr:     "host",
+	// 	Port:     "3306",
+	// 	DBName:   "db-name",
+	// 	Username: "db-user",
+	// 	Password: "db-pass",
+	// }
+	// DB = mydb.NewDBConnect(Logger)
+	// DB.AutoMigrate(&Department{})
+	// DB.AutoMigrate(&Userlist{})
 }
 
 func main() {
@@ -83,8 +91,3 @@ func main() {
 	LogSugar.Info("info log")
 	LogSugar.Error("error log")
 }
-
-```
-
-
-更多详细示例请参考example
