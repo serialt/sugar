@@ -1,8 +1,0 @@
-log:
-  logLevel: info
-  # logFile: imau.log
-gitee:
- user: imaus
- private: true 
-
-

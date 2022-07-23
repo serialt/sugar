@@ -3,11 +3,25 @@
 ### 使用方法
 v1及以下版本是带有数据库，v2版本不带有数据库
 ```
-go get -u  github.com/serialt/sugar
+go get -u  github.com/serialt/sugar/v2
 
 ```
 
 ### 库使用方法
+
+#### 简单使用日志
+```go
+package main
+
+func main() {
+	// 默认日志配置是: info级别，输出到控制台
+	sugar.Debug("debug logSugar")
+	sugar.Info("info logSugar")
+	sugar.Error("error logSugar")
+}
+```
+
+#### 复杂使用
 ```go
 package main
 
@@ -69,7 +83,7 @@ func init() {
 	// fmt.Println(Config)
 
 	// Logger = sugar.NewLogger(LogLevel, LogFile)
-	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile)
+	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile, "", false)
 }
 
 func main() {
@@ -86,5 +100,13 @@ func main() {
 }
 ```
 
+配置文件示例
+```yaml
+log:
+  logLevel: info
+  # logFile: imau.log
+gitee:
+ user: imaus
+ private: true 
 
-更多详细示例请参考example
+```

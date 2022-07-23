@@ -130,12 +130,12 @@ func NewLogger(logLevel, logFile, logtype string, logColor bool) *zap.Logger {
 }
 
 func init() {
-	sugar = NewLogger("info", "", "", false).Sugar()
+	sugar = NewLogger("debug", "", "", false).Sugar()
 }
 
 // NewSugarLogger 创建一个sugar
-func NewSugarLogger(logLevel, logFile, logtype string, logColor bool) *zap.SugaredLogger {
-	sugarLog := NewLogger(logLevel, logFile, logtype, logColor)
+func NewSugarLogger(logLevel, logFile, logType string, logColor bool) *zap.SugaredLogger {
+	sugarLog := NewLogger(logLevel, logFile, logType, logColor)
 	return sugarLog.Sugar()
 
 }
