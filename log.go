@@ -129,8 +129,17 @@ func NewLogger(logLevel, logFile, logtype string, logColor bool) *zap.Logger {
 	return lg.NewMyLogger()
 }
 
+var std = New()
+
 func init() {
-	sugar = NewLogger("debug", "", "", false).Sugar()
+	// sugar = NewLogger("debug", "", "", false).Sugar()
+}
+
+func SetLog(level string, file string) {
+	std.LogLevel = level
+	std.LogFile = file
+	sugar = std.NewMyLogger().Sugar()
+
 }
 
 // NewSugarLogger 创建一个sugar
@@ -138,6 +147,19 @@ func NewSugarLogger(logLevel, logFile, logType string, logColor bool) *zap.Sugar
 	sugarLog := NewLogger(logLevel, logFile, logType, logColor)
 	return sugarLog.Sugar()
 
+}
+
+func New() *Logger {
+	return &Logger{
+		LogLevel:      "info",
+		LogFile:       "",
+		LogType:       "",
+		LogMaxSize:    50,
+		LogMaxBackups: 10,
+		LogMaxAge:     365,
+		LogCompress:   true,
+		LogColor:      false,
+	}
 }
 
 func Debug(args ...interface{}) {

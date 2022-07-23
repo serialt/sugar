@@ -14,7 +14,8 @@ go get -u  github.com/serialt/sugar/v2
 package main
 
 func main() {
-	// 默认日志配置是: info级别，输出到控制台
+	// 设置简单日志参数
+	sugar.SetLog("error", "log.txt")
 	sugar.Debug("debug logSugar")
 	sugar.Info("info logSugar")
 	sugar.Error("error logSugar")
