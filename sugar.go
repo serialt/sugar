@@ -133,7 +133,8 @@ func NewLogger(logLevel, logFile, logtype string, logColor bool) *zap.Logger {
 var std = New()
 
 func init() {
-	// sugar = NewLogger("debug", "", "", false).Sugar()
+	sugar = NewLogger("debug", "", "", false).Sugar()
+	Log = NewLogger("debug", "", "", false)
 }
 
 func SetLog(level string, file string) {
