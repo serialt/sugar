@@ -111,7 +111,8 @@ func (lg *Logger) NewMyLogger() *zap.Logger {
 	}
 
 	// 开启开发模式，堆栈跟踪: [zap.AddCaller()]
-	myLogger := zap.New(core, zap.AddCaller())
+	// 重要, 新增zap.AddCallerSkip(1)使调用往上调一层
+	myLogger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 	return myLogger
 }
 
