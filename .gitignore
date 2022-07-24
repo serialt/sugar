@@ -28,5 +28,5 @@ dist/
 
 tmp/
 sugar
-example/example
-example/imau.log
+log.txt
+test/

@@ -9,6 +9,7 @@ import (
 )
 
 var sugar *zap.SugaredLogger
+var Log *zap.Logger
 
 type Logger struct {
 	LogLevel      string // 日志级别
@@ -139,6 +140,7 @@ func SetLog(level string, file string) {
 	std.LogLevel = level
 	std.LogFile = file
 	sugar = std.NewMyLogger().Sugar()
+	Log = std.NewMyLogger()
 
 }
 
