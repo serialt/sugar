@@ -1,9 +1,8 @@
-module github.com/serialt/sugar/v2
+module github.com/serialt/sugar
 
 go 1.18
 
 require (
-	github.com/mitchellh/go-homedir v1.1.0
 	go.uber.org/zap v1.21.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
