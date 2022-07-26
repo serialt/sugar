@@ -22,22 +22,22 @@ type Logger struct {
 	LogColor      bool   // 日志级别分颜色
 }
 
+// LevelToZapLevel  转换日志级别
 func LevelToZapLevel(level string) zapcore.Level {
-	// 转换日志级别
 	switch level {
-	case "debug":
+	case "debug", "DEBUG":
 		return zapcore.DebugLevel
-	case "info":
+	case "info", "INFO":
 		return zapcore.InfoLevel
-	case "warn":
+	case "warn", "WARN", "WARNING":
 		return zapcore.WarnLevel
-	case "error":
+	case "error", "ERROR":
 		return zapcore.ErrorLevel
 	// case "dpanic":
 	// 	return zapcore.DPanicLevel
 	// case "panic":
 	// 	return zapcore.PanicLevel
-	case "fatal":
+	case "fatal", "FATAL":
 		return zapcore.FatalLevel
 	default:
 		return zapcore.InfoLevel
@@ -45,7 +45,8 @@ func LevelToZapLevel(level string) zapcore.Level {
 
 }
 
-func (lg *Logger) NewMyLogger() *zap.Logger {
+// NewCore 创建一个自定义的zapcore.Core
+func (lg *Logger) NewCore() (core zapcore.Core) {
 
 	// 设置日志级别
 	atomicLevel := zap.NewAtomicLevel()
@@ -96,7 +97,6 @@ func (lg *Logger) NewMyLogger() *zap.Logger {
 
 	}
 
-	var core zapcore.Core
 	if lg.LogFile == "" {
 		core = zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), atomicLevel)
 	} else {
@@ -110,9 +110,25 @@ func (lg *Logger) NewMyLogger() *zap.Logger {
 		core = zapcore.NewCore(encoder, zapcore.AddSync(file), atomicLevel)
 	}
 
+	return
+
+}
+
+// newInnerLogger 生成一个*zap.Logger，用于直接调用
+func (lg *Logger) newInnerLogger(core zapcore.Core) *zap.Logger {
+
 	// 开启开发模式，堆栈跟踪: [zap.AddCaller()]
 	// 重要, 新增zap.AddCallerSkip(1)使调用往上调一层
 	myLogger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	return myLogger
+}
+
+// NewMyLogger 生成一个 *zap.Logger，用于给外部调用
+func (lg *Logger) NewMyLogger(core zapcore.Core) *zap.Logger {
+
+	// 开启开发模式，堆栈跟踪: [zap.AddCaller()]
+	// 重要, 新增zap.AddCallerSkip(1)使调用往上调一层
+	myLogger := zap.New(core, zap.AddCaller())
 	return myLogger
 }
 
@@ -128,7 +144,7 @@ func NewLogger(logLevel, logFile, logtype string, logColor bool) *zap.Logger {
 		LogCompress:   true,
 		LogColor:      logColor,
 	}
-	return lg.NewMyLogger()
+	return lg.NewMyLogger(lg.NewCore())
 }
 
 var std = New()
@@ -138,11 +154,12 @@ func init() {
 	Log = NewLogger("debug", "", "", false)
 }
 
+// SetLog 用于配置简单的日志
 func SetLog(level string, file string) {
 	std.LogLevel = level
 	std.LogFile = file
-	sugar = std.NewMyLogger().Sugar()
-	Log = std.NewMyLogger()
+	sugar = std.newInnerLogger(std.NewCore()).Sugar()
+	Log = std.newInnerLogger(std.NewCore())
 
 }
 
@@ -153,6 +170,7 @@ func NewSugarLogger(logLevel, logFile, logType string, logColor bool) *zap.Sugar
 
 }
 
+// New 创建一个默认的 *Logger 结构
 func New() *Logger {
 	return &Logger{
 		LogLevel:      "info",
