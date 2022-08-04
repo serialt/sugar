@@ -150,8 +150,9 @@ func NewLogger(logLevel, logFile, logtype string, logColor bool) *zap.Logger {
 var std = New()
 
 func init() {
-	sugar = NewLogger("debug", "", "", false).Sugar()
-	Log = NewLogger("debug", "", "", false)
+	std.LogLevel = "debug"
+	sugar = std.newInnerLogger(std.NewCore()).Sugar()
+	Log = std.newInnerLogger(std.NewCore())
 }
 
 // SetLog 用于配置简单的日志
