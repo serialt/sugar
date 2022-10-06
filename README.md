@@ -1,4 +1,5 @@
-# 连接数据库和日志的库
+# sugar lib
+封装好的一些常用方法
 
 ### 使用方法
 ```
@@ -68,13 +69,11 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/serialt/sugar"
 	flag "github.com/spf13/pflag"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -89,7 +88,7 @@ var (
 
 	// Logger   *zap.Logger
 	LogSugar *zap.SugaredLogger
-	Config   *MyConfig
+	Config   MyConfig
 )
 
 type Log struct {
@@ -115,12 +114,7 @@ func init() {
 	flag.Parse()
 
 	// 读取配置文件
-	byteConfig, _ := ioutil.ReadFile(ConfigPath)
-	err := yaml.Unmarshal(byteConfig, &Config)
-	if err != nil {
-		fmt.Printf("转换配置文件到结构体失败: %v", err)
-	}
-
+	_ = sugar.LoadConfig(ConfigPath, &Config)
 	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile, "", true)
 }
 
@@ -137,5 +131,6 @@ func main() {
 	LogSugar.Info("info log")
 	LogSugar.Error("error log")
 }
+
 
 ```

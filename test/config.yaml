@@ -1,0 +1,4 @@
+log:
+    logLevel: debug
+    # logFile: log.txt
+msg: hello,world
