@@ -88,7 +88,7 @@ var (
 
 	// Logger   *zap.Logger
 	LogSugar *zap.SugaredLogger
-	Config   MyConfig
+	Config   *MyConfig
 )
 
 type Log struct {
@@ -114,8 +114,10 @@ func init() {
 	flag.Parse()
 
 	// 读取配置文件
-	_ = sugar.LoadConfig(ConfigPath, &Config)
-	LogSugar = sugar.NewSugarLogger(Config.Log.LogLevel, Config.Log.LogFile, "", true)
+	err := sugar.LoadConfig(ConfigPath, &Config)
+	if err != nil {
+		Config = new(MyConfig)
+	}
 }
 
 func main() {
