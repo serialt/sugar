@@ -164,6 +164,11 @@ func SetLog(level string, file string) {
 
 }
 
+// Upgrade
+func Upgrade(log *zap.Logger) {
+	Log = log
+}
+
 // NewSugarLogger 创建一个sugar
 func NewSugarLogger(logLevel, logFile, logType string, logColor bool) *zap.SugaredLogger {
 	sugarLog := NewLogger(logLevel, logFile, logType, logColor)
