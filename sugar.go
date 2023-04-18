@@ -56,7 +56,9 @@ func NewSlog(lg *Log) *slog.Logger {
 }
 
 func New() *slog.Logger {
-	lg := &Log{}
+	lg := &Log{
+		Short: true,
+	}
 	return NewSlog(lg)
 
 }

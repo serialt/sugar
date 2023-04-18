@@ -14,7 +14,7 @@
 package main
 
 import (
-	sugar "github.com/serialt/sugar/v2"
+	sugar "github.com/serialt/sugar/v3"
 )
 
 func main() {
