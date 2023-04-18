@@ -1,10 +1,20 @@
 package sugar
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestLog(t *testing.T) {
-	SetLog("error", "")
-	Debug("debug logSugar")
-	Info("info logSugar")
-	Error("error logSugar")
+func TestNewSlog(t *testing.T) {
+	lg := &Log{}
+	log := NewSlog(lg)
+	log.Debug("debug", "hello", "world")
+	log.Info("info", "hello", "world")
+	log.Error("error", "hello", "world")
+}
+
+func TestNewDefault(t *testing.T) {
+	log := New()
+	log.Debug("debug", "hello", "world")
+	log.Info("info", "hello", "world")
+	log.Error("error", "hello", "world")
 }
