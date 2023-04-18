@@ -3,7 +3,9 @@
 
 ### 使用方法
 ```
-go get github.com/serialt/sugar
+go get github.com/serialt/sugar/v3
+
+go get golang.org/x/exp/slog
 
 ```
 
@@ -13,13 +15,29 @@ go get github.com/serialt/sugar
 ```go
 package main
 
-func main() {
-	// 设置简单日志参数
-	sugar.SetLog("error", "log.txt")
-	sugar.Debug("debug logSugar")
-	sugar.Info("info logSugar")
-	sugar.Error("error logSugar")
+import (
+	"github.com/serialt/sugar/v3"
+	"golang.org/x/exp/slog"
+)
+
+func init() {
+	// log := sugar.NewSlog(&sugar.Log{
+	// 	Level: "info",
+	// 	Type:  "json",
+	// 	Short: true,
+	// })
+
+	log := sugar.New()
+
+	slog.SetDefault(log)
 }
+
+func main() {
+	slog.Debug("debug", "hello", "world")
+	slog.Info("info", "hello", "world")
+	slog.Error("error", "hello", "world")
+}
+
 ```
 
 #### 复杂使用
