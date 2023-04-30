@@ -1,138 +1,108 @@
 # sugar lib
+
 封装好的一些常用方法
 
 ### 使用方法
+
 ```
-go get github.com/serialt/sugar
+go get github.com/serialt/sugar/v2
+
+go get golang.org/x/exp/slog
 
 ```
 
 ### 库使用方法
 
 #### 简单使用日志
+
 ```go
 package main
 
-func main() {
-	// 设置简单日志参数
-	sugar.SetLog("error", "log.txt")
-	sugar.Debug("debug logSugar")
-	sugar.Info("info logSugar")
-	sugar.Error("error logSugar")
+import (
+	"github.com/serialt/sugar/v2"
+	"golang.org/x/exp/slog"
+)
+
+func init() {
+	slog.SetDefault(sugar.New())
 }
+
+func main() {
+	slog.Debug("debug", "hello", "world")
+	slog.Info("info", "hello", "world")
+	slog.Error("error", "hello", "world")
+}
+
 ```
+
+#### 可选参数
+
+```go
+package main
+
+import (
+	sugar "github.com/serialt/sugar/v2"
+	"golang.org/x/exp/slog"
+)
+
+func init() {
+	options := []sugar.LogOptions{
+		sugar.WithLevel("debug"),
+		sugar.WithShort(false),
+		sugar.WithType("json"),
+	}
+	slog.SetDefault(sugar.New(options...))
+}
+func main() {
+
+	slog.Debug("debug msg")
+	slog.Info("info msg")
+}
+
+```
+
 
 #### 复杂使用
 ```go
 package main
 
 import (
-	"fmt"
-	"os"
-
+	sugar "github.com/serialt/sugar/v2"
 	flag "github.com/spf13/pflag"
-
-	"github.com/serialt/sugar"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
+	"golang.org/x/exp/slog"
 )
+
+type Config struct {
+	Server   string
+	Port     string
+	LogLevel string
+}
 
 var (
-	// 版本信息
-	appVersion bool // 控制是否显示版本
-	APPVersion = "v0.0.2"
-	BuildTime  = "2006-01-02 15:04:05"
-	GitCommit  = "xxxxxxxxxxx"
-
-	// Logger   *zap.Logger
-	LogSugar *zap.SugaredLogger
+	cfgfile string
+	config  *Config
 )
-
 
 func init() {
-	
-	// Logger = sugar.NewLogger(LogLevel, LogFile)
-	LogSugar = sugar.NewSugarLogger("info", "ccc", "", false)
-}
 
-func main() {
-	LogSugar.Debug("debug log")
-	LogSugar.Info("info log")
-	LogSugar.Error("error log")
-}
-```
-更多复杂使用可以参考sugar.NewLogger的实现
-
-
-```go
-package main
-
-import (
-	"fmt"
-	"os"
-
-	"github.com/serialt/sugar"
-	flag "github.com/spf13/pflag"
-	"go.uber.org/zap"
-)
-
-var (
-	// 版本信息
-	appVersion bool // 控制是否显示版本
-	APPVersion = "v0.0.2"
-	BuildTime  = "2006-01-02 15:04:05"
-	GitCommit  = "xxxxxxxxxxx"
-
-	// 配置文件,置空则表示读取项目根目录里的config.yaml
-	ConfigPath = "config.yaml"
-
-	// Logger   *zap.Logger
-	LogSugar *zap.SugaredLogger
-	Config   *MyConfig
-)
-
-type Log struct {
-	LogLevel string `yaml:"logLevel"` // 日志级别，支持debug,info,warn,error,panic
-	LogFile  string `yaml:"logFile"`  // 日志文件存放路径,如果为空，则输出到控制台
-}
-
-type MyConfig struct {
-	Log Log    `yaml:"log"`
-	Msg string `yaml:"msg"`
-}
-
-func init() {
-	flag.BoolVarP(&appVersion, "version", "v", false, "Display build and version msg")
-	flag.StringVarP(&ConfigPath, "cfgFile", "c", ConfigPath, "")
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Println("使用说明")
-		flag.PrintDefaults()
-	}
-	flag.ErrHelp = fmt.Errorf("\n\nSome errors have occurred, check and try again !!! ")
+	flag.StringVarP(&cfgfile, "config", "c", "config.yaml", "Config file")
 	flag.CommandLine.SortFlags = false
 	flag.Parse()
 
-	// 读取配置文件
-	err := sugar.LoadConfig(ConfigPath, &Config)
+	err := sugar.LoadConfig(cfgfile, &config)
 	if err != nil {
-		Config = new(MyConfig)
+		config = new(Config)
 	}
+	options := []sugar.LogOptions{
+		sugar.WithLevel(config.LogLevel),
+	}
+	slog.SetDefault(sugar.New(options...))
 }
-
 func main() {
-	if appVersion {
-		fmt.Printf("APPVersion: %v  BuildTime: %v  GitCommit: %v\n",
-			APPVersion,
-			BuildTime,
-			GitCommit)
-		return
-	}
-
-	LogSugar.Debug("debug log")
-	LogSugar.Info("info log")
-	LogSugar.Error("error log")
+	slog.Info("struct", "cfg", config)
+	slog.Debug("debug msg")
+	slog.Info("info msg")
 }
-
 
 ```
+

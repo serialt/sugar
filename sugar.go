@@ -9,16 +9,74 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+const (
+	defaultLogLevel = "info"
+	// defaultLogFile       = "sugar.log"
+	defaultLogType       = "txt"
+	defaultLogMaxSize    = 100
+	defaultLogMaxBackups = 30
+	defaultLogMaxAge     = 365
+	defaultLogCompress   = true
+	defaultLogShort      = true
+)
+
 type Log struct {
-	LogLevel      string // 日志级别
-	LogFile       string // 日志文件存放路径,如果为空，则输出到控制台
-	LogType       string // 日志类型，支持 txt 和 json ，默认txt
-	LogMaxSize    int    //单位M
-	LogMaxBackups int    // 日志文件保留个数
-	LogMaxAge     int    // 单位天
-	LogCompress   bool   // 压缩轮转的日志
-	LogColor      bool   // 日志级别分颜色
-	Short         bool   // 以包/文件:行号 显示短路径，不显示全路径
+	Level      string // 日志级别
+	File       string // 日志文件存放路径,如果为空，则输出到控制台
+	Type       string // 日志类型，支持 txt 和 json ，默认txt
+	MaxSize    int    //单位M
+	MaxBackups int    // 日志文件保留个数
+	MaxAge     int    // 单位天
+	Compress   bool   // 压缩轮转的日志
+	Short      bool   // 以包/文件:行号 显示短路径，不显示全路径
+}
+
+type LogOptions func(*Log)
+
+func WithLevel(level string) LogOptions {
+	return func(lg *Log) {
+		lg.Level = level
+	}
+}
+func WithFile(file string) LogOptions {
+	return func(lg *Log) {
+		lg.File = file
+	}
+}
+
+func WithType(tp string) LogOptions {
+	return func(lg *Log) {
+		lg.Type = tp
+	}
+}
+
+func WithMaxSize(maxSize int) LogOptions {
+	return func(lg *Log) {
+		lg.MaxSize = maxSize
+	}
+}
+
+func WithCompress(compress bool) LogOptions {
+	return func(lg *Log) {
+		lg.Compress = compress
+	}
+}
+
+func WithShort(Short bool) LogOptions {
+	return func(lg *Log) {
+		lg.Short = Short
+	}
+}
+
+func DefaultLog(log *Log) *Log {
+	log.Level = defaultLogLevel
+	log.Type = defaultLogType
+	log.MaxSize = defaultLogMaxSize
+	log.MaxBackups = defaultLogMaxBackups
+	log.MaxAge = defaultLogMaxAge
+	log.Compress = defaultLogCompress
+	log.Short = defaultLogShort
+	return log
 }
 
 // LevelToZapLevel  转换日志级别
@@ -50,24 +108,24 @@ func NewSlog(lg *Log) *slog.Logger {
 	}
 	opts := slog.HandlerOptions{
 		AddSource:   true,
-		Level:       LevelToSlogLevel(lg.LogLevel),
+		Level:       LevelToSlogLevel(lg.Level),
 		ReplaceAttr: replace,
 	}
 	var out io.Writer
-	if len(lg.LogFile) > 0 {
+	if len(lg.File) > 0 {
 		out = &lumberjack.Logger{
-			Filename:   "slog.log", // 日志文件
-			MaxSize:    100,        // 单个日志文件大小，单位M
-			MaxBackups: 30,         // 轮转保留个数
-			MaxAge:     365,        // 最长保留时间，单位天
-			Compress:   true,       // 默认不压缩
+			Filename:   "slog.log",    // 日志文件
+			MaxSize:    lg.MaxSize,    // 单个日志文件大小，单位M
+			MaxBackups: lg.MaxBackups, // 轮转保留个数
+			MaxAge:     lg.MaxAge,     // 最长保留时间，单位天
+			Compress:   lg.Compress,   // 默认不压缩
 		}
 	} else {
 		out = os.Stdout
 	}
 
 	var log *slog.Logger
-	if lg.LogType == "json" {
+	if lg.Type == "json" {
 		log = slog.New(opts.NewJSONHandler(out))
 	} else {
 		log = slog.New(opts.NewTextHandler(out))
@@ -75,10 +133,16 @@ func NewSlog(lg *Log) *slog.Logger {
 	return log
 }
 
-func New() *slog.Logger {
-	lg := &Log{}
-	return NewSlog(lg)
+func New(options ...LogOptions) *slog.Logger {
+	// 默认值的设定
+	lg := DefaultLog(&Log{})
 
+	// 遍历可选参数，然后分别调用匿名函数，将连接对象指针传入，进行修改
+	for _, op := range options {
+		// 遍历调用函数，进行数据修改
+		op(lg)
+	}
+	return NewSlog(lg)
 }
 
 // // SetLog 用于配置简单的日志
