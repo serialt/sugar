@@ -7,12 +7,6 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-const (
-	defaultLogLevel = "info"
-	defaultLogType  = "txt"
-	defaultLogShort = true
-)
-
 type Log struct {
 	Level string // 日志级别  string // 日志文件存放路径,如果为空，则输出到控制台
 	Type  string // 日志类型，支持 txt 和 json ，默认txt
@@ -37,13 +31,6 @@ func WithShort(short bool) LogOptions {
 	return func(lg *Log) {
 		lg.Short = short
 	}
-}
-
-func DefaultLog(log *Log) *Log {
-	log.Level = defaultLogLevel
-	log.Type = defaultLogType
-	log.Short = defaultLogShort
-	return log
 }
 
 // LevelToZapLevel  转换日志级别
@@ -90,12 +77,16 @@ func NewSlog(lg *Log) *slog.Logger {
 
 func New(options ...LogOptions) *slog.Logger {
 	// 默认值的设定
-	lg := DefaultLog(&Log{})
+	lg := &Log{
+		Level: "info",
+		Type:  "txt",
+		Short: true,
+	}
 
 	// 遍历可选参数，然后分别调用匿名函数，将连接对象指针传入，进行修改
-	for _, op := range options {
+	for _, opt := range options {
 		// 遍历调用函数，进行数据修改
-		op(lg)
+		opt(lg)
 	}
 	return NewSlog(lg)
 }
