@@ -9,17 +9,6 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-const (
-	defaultLogLevel = "info"
-	// defaultLogFile       = "sugar.log"
-	defaultLogType       = "txt"
-	defaultLogMaxSize    = 100
-	defaultLogMaxBackups = 30
-	defaultLogMaxAge     = 365
-	defaultLogCompress   = true
-	defaultLogShort      = true
-)
-
 type Log struct {
 	Level      string // 日志级别
 	File       string // 日志文件存放路径,如果为空，则输出到控制台
@@ -66,17 +55,6 @@ func WithShort(Short bool) LogOptions {
 	return func(lg *Log) {
 		lg.Short = Short
 	}
-}
-
-func DefaultLog(log *Log) *Log {
-	log.Level = defaultLogLevel
-	log.Type = defaultLogType
-	log.MaxSize = defaultLogMaxSize
-	log.MaxBackups = defaultLogMaxBackups
-	log.MaxAge = defaultLogMaxAge
-	log.Compress = defaultLogCompress
-	log.Short = defaultLogShort
-	return log
 }
 
 // LevelToZapLevel  转换日志级别
@@ -135,7 +113,15 @@ func NewSlog(lg *Log) *slog.Logger {
 
 func New(options ...LogOptions) *slog.Logger {
 	// 默认值的设定
-	lg := DefaultLog(&Log{})
+	lg := &Log{
+		Level:      "info",
+		Type:       "txt",
+		MaxSize:    100,
+		MaxBackups: 30,
+		MaxAge:     365,
+		Compress:   true,
+		Short:      true,
+	}
 
 	// 遍历可选参数，然后分别调用匿名函数，将连接对象指针传入，进行修改
 	for _, op := range options {
