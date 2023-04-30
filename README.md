@@ -93,10 +93,10 @@ func init() {
 	if err != nil {
 		config = new(Config)
 	}
-	options := []sugar.LogOptions{
+	slog.SetDefault(sugar.New(
 		sugar.WithLevel(config.LogLevel),
-	}
-	slog.SetDefault(sugar.New(options...))
+		))
+
 }
 func main() {
 	slog.Info("struct", "cfg", config)

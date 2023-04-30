@@ -3,7 +3,7 @@
  * @Author        : serialt
  * @Email         : tserialt@gmail.com
  * @Created Time  : 2023-04-18 08:31:58
- * @Last modified : 2023-04-30 10:37:30
+ * @Last modified : 2023-04-30 11:31:15
  * @FilePath      : /sugar/exmaple/main.go
  * @Other         :
  * @              :
@@ -19,12 +19,10 @@ import (
 )
 
 func init() {
-	options := []sugar.LogOptions{
+	slog.SetDefault(sugar.New(
 		sugar.WithLevel("debug"),
 		sugar.WithShort(false),
-		sugar.WithType("json"),
-	}
-	slog.SetDefault(sugar.New(options...))
+		sugar.WithType("json")))
 }
 func main() {
 
