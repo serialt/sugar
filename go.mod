@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
-	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	golang.org/x/exp v0.0.0-20230519143937-03e91628a987
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )

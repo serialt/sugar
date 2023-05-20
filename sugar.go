@@ -80,11 +80,12 @@ func NewSlog(lg *Log) *slog.Logger {
 
 		// Remove the directory from the source's filename.
 		if a.Key == slog.SourceKey && lg.Short {
-			a.Value = slog.StringValue(filepath.Base(a.Value.String()))
+			source := a.Value.Any().(*slog.Source)
+			source.File = filepath.Base(source.File)
 		}
 		return a
 	}
-	opts := slog.HandlerOptions{
+	opts := &slog.HandlerOptions{
 		AddSource:   true,
 		Level:       LevelToSlogLevel(lg.Level),
 		ReplaceAttr: replace,
@@ -104,9 +105,9 @@ func NewSlog(lg *Log) *slog.Logger {
 
 	var log *slog.Logger
 	if lg.Type == "json" {
-		log = slog.New(opts.NewJSONHandler(out))
+		log = slog.New(slog.NewJSONHandler(out, opts))
 	} else {
-		log = slog.New(opts.NewTextHandler(out))
+		log = slog.New(slog.NewTextHandler(out, opts))
 	}
 	return log
 }
