@@ -53,14 +53,19 @@ func LevelToSlogLevel(level string) slog.Level {
 func NewSlog(lg *Log) *slog.Logger {
 
 	replace := func(groups []string, a slog.Attr) slog.Attr {
+		// if a.Key == slog.TimeKey {
+		// 	a.Value = slog.AnyValue(time.Now().Format(time.RFC3339))
+		// }
 
 		// Remove the directory from the source's filename.
 		if a.Key == slog.SourceKey && lg.Short {
-			a.Value = slog.StringValue(filepath.Base(a.Value.String()))
+			source := a.Value.Any().(*slog.Source)
+			source.File = filepath.Base(source.File)
+			// a.Value = slog.StringValue(filepath.Base(a.Value.String()))
 		}
 		return a
 	}
-	opts := slog.HandlerOptions{
+	opts := &slog.HandlerOptions{
 		AddSource:   true,
 		Level:       LevelToSlogLevel(lg.Level),
 		ReplaceAttr: replace,
@@ -68,9 +73,9 @@ func NewSlog(lg *Log) *slog.Logger {
 
 	var log *slog.Logger
 	if lg.Type == "json" {
-		log = slog.New(opts.NewJSONHandler(os.Stdout))
+		log = slog.New(slog.NewJSONHandler(os.Stderr, opts))
 	} else {
-		log = slog.New(opts.NewTextHandler(os.Stdout))
+		log = slog.New(slog.NewTextHandler(os.Stdout, opts))
 	}
 	return log
 }
