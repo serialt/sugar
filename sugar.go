@@ -93,7 +93,7 @@ func NewSlog(lg *Log) *slog.Logger {
 	var out io.Writer
 	if len(lg.File) > 0 {
 		out = &lumberjack.Logger{
-			Filename:   "slog.log",    // 日志文件
+			Filename:   lg.File,       // 日志文件
 			MaxSize:    lg.MaxSize,    // 单个日志文件大小，单位M
 			MaxBackups: lg.MaxBackups, // 轮转保留个数
 			MaxAge:     lg.MaxAge,     // 最长保留时间，单位天
