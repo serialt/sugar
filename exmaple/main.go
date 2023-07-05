@@ -3,7 +3,7 @@
  * @Author        : serialt
  * @Email         : tserialt@gmail.com
  * @Created Time  : 2023-04-18 08:31:58
- * @Last modified : 2023-04-30 11:31:15
+ * @Last modified : 2023-07-05 13:07:37
  * @FilePath      : /sugar/exmaple/main.go
  * @Other         :
  * @              :
@@ -14,8 +14,9 @@
 package main
 
 import (
+	"log/slog"
+
 	sugar "github.com/serialt/sugar/v2"
-	"golang.org/x/exp/slog"
 )
 
 func init() {

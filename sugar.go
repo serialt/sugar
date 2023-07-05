@@ -2,10 +2,10 @@ package sugar
 
 import (
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 
-	"golang.org/x/exp/slog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
