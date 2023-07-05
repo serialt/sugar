@@ -1,10 +1,9 @@
 module github.com/serialt/sugar/v3
 
-go 1.20
+go 1.21
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
-	golang.org/x/exp v0.0.0-20230519143937-03e91628a987
 	gopkg.in/yaml.v3 v3.0.1
 )
 

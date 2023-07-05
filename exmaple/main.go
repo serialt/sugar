@@ -14,8 +14,9 @@
 package main
 
 import (
+	"log/slog"
+
 	sugar "github.com/serialt/sugar/v3"
-	"golang.org/x/exp/slog"
 )
 
 func init() {

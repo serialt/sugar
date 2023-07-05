@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 type Log struct {
