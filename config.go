@@ -1,7 +1,6 @@
 package sugar
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -23,7 +22,7 @@ func LoadConfig(configPath string, out interface{}) (err error) {
 		}
 		configPath = filepath.Join(filepath.Dir(exePath), "config.yaml")
 	}
-	byteConfig, err := ioutil.ReadFile(configPath)
+	byteConfig, err := os.ReadFile(configPath)
 	if err != nil {
 		return
 	}

@@ -1,4 +1,4 @@
-module github.com/serialt/sugar/v3
+module github.com/serialt/sugar
 
 go 1.21.4
 
